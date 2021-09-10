@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Http from '../../libs/http';
 import CoinsItem from './CoinsItem';
+import Colors from '../../res/colors';
 
 const CoinsScreen = props => {
   const [coins, setCoins] = useState([]);
@@ -21,7 +22,7 @@ const CoinsScreen = props => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
+      backgroundColor: Colors.charade,
     },
     titleText: {
       color: '#fff',
