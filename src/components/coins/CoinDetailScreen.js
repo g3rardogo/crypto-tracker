@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, SectionList, StyleSheet} from 'react-native';
 import Colors from '../../res/colors';
 
 const CoinDetailScreen = props => {
@@ -13,6 +13,24 @@ const CoinDetailScreen = props => {
       const name = nameStr.toLowerCase().replace(' ', '-');
       return `https://c1.coinlore.com/img/25x25/${name}.png`;
     }
+  };
+
+  const getSections = coin => {
+    const sections = [
+      {
+        title: 'Market cap',
+        data: [coin.market_cap_usd],
+      },
+      {
+        title: 'Volume 24h',
+        data: [coin.volume24],
+      },
+      {
+        title: 'Change 24h',
+        data: [coin.percent_change_24h],
+      },
+    ];
+    return sections;
   };
 
   const styles = StyleSheet.create({
@@ -35,6 +53,22 @@ const CoinDetailScreen = props => {
       width: 25,
       height: 25,
     },
+    sectionHeader: {
+      backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      padding: 8,
+    },
+    sectionItem: {
+      padding: 8,
+    },
+    itemText: {
+      color: '#fff',
+      fontSize: 14,
+    },
+    sectionText: {
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: 'bold',
+    },
   });
 
   return (
@@ -46,6 +80,20 @@ const CoinDetailScreen = props => {
         />
         <Text style={styles.titleText}>{coinDetails.name}</Text>
       </View>
+      <SectionList
+        sections={getSections(coinDetails)}
+        keyExtractor={item => item}
+        renderItem={({item}) => (
+          <View style={styles.sectionItem}>
+            <Text style={styles.itemText}>{item}</Text>
+          </View>
+        )}
+        renderSectionHeader={({section}) => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionText}>{section.title}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
