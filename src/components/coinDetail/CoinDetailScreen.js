@@ -1,12 +1,26 @@
-import React, {useState} from 'react';
-import {View, Text, Image, SectionList, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  SectionList,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
 import Colors from '../../res/colors';
+import Http from '../../libs/http';
+import CoinMarketItem from './CoinMarketItem';
 
 const CoinDetailScreen = props => {
   const {coin} = props.route.params;
   const [coinDetails, setDetails] = useState(coin);
+  const [markets, setMarkets] = useState([]);
   props.navigation.setOptions({title: coin.name});
   console.log('details: ', coinDetails);
+
+  useEffect(() => {
+    getMarkets(coin.id);
+  }, []);
 
   const getSymbolIcon = nameStr => {
     if (nameStr) {
@@ -33,6 +47,12 @@ const CoinDetailScreen = props => {
     return sections;
   };
 
+  const getMarkets = async coinId => {
+    const url = `https://api.coinlore.net/api/coin/markets/?id=${coinId}`;
+    const markets = await Http.instance.get(url);
+    setMarkets(markets);
+  };
+
   const styles = StyleSheet.create({
     container: {
       backgroundColor: Colors.charade,
@@ -49,9 +69,23 @@ const CoinDetailScreen = props => {
       color: '#fff',
       marginLeft: 8,
     },
+    marketsTitle: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      marginLeft: 16,
+    },
     iconImg: {
       width: 25,
       height: 25,
+    },
+    section: {
+      maxHeight: 220,
+    },
+    list: {
+      maxHeight: 100,
+      paddingLeft: 16,
     },
     sectionHeader: {
       backgroundColor: 'rgba(0, 0, 0, 0.2)',
@@ -81,6 +115,7 @@ const CoinDetailScreen = props => {
         <Text style={styles.titleText}>{coinDetails.name}</Text>
       </View>
       <SectionList
+        style={styles.section}
         sections={getSections(coinDetails)}
         keyExtractor={item => item}
         renderItem={({item}) => (
@@ -93,6 +128,13 @@ const CoinDetailScreen = props => {
             <Text style={styles.sectionText}>{section.title}</Text>
           </View>
         )}
+      />
+      <Text style={styles.marketsTitle}>Markets</Text>
+      <FlatList
+        style={styles.list}
+        horizontal={true}
+        data={markets}
+        renderItem={({item}) => <CoinMarketItem item={item} />}
       />
     </View>
   );
