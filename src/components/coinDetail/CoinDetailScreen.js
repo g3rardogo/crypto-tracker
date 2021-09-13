@@ -5,16 +5,19 @@ import {
   Image,
   SectionList,
   FlatList,
+  Pressable,
   StyleSheet,
 } from 'react-native';
 import Colors from '../../res/colors';
 import Http from '../../libs/http';
+import Storage from '../../libs/storage';
 import CoinMarketItem from './CoinMarketItem';
 
 const CoinDetailScreen = props => {
   const {coin} = props.route.params;
   const [coinDetails, setDetails] = useState(coin);
   const [markets, setMarkets] = useState([]);
+  const [isFavorite, setFavorite] = useState(false);
   props.navigation.setOptions({title: coin.name});
   console.log('details: ', coinDetails);
 
@@ -53,15 +56,39 @@ const CoinDetailScreen = props => {
     setMarkets(markets);
   };
 
+  const addFavorite = () => {
+    const coinStr = JSON.stringify(coin);
+    const key = `favorite-${coin.id}`;
+    const stored = Storage.instance.add(key, coinStr);
+
+    if (stored) {
+      setFavorite(true);
+    }
+  };
+
+  const removeFavorite = () => {};
+
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      removeFavorite();
+    } else {
+      addFavorite();
+    }
+  };
+
   const styles = StyleSheet.create({
     container: {
       backgroundColor: Colors.charade,
       flex: 1,
     },
+    row: {
+      flexDirection: 'row',
+    },
     subHeader: {
       backgroundColor: 'rgba(0, 0, 0, 0.2)',
       padding: 16,
       flexDirection: 'row',
+      justifyContent: 'space-between',
     },
     titleText: {
       fontSize: 16,
@@ -103,16 +130,42 @@ const CoinDetailScreen = props => {
       fontSize: 14,
       fontWeight: 'bold',
     },
+    btnFavorite: {
+      padding: 8,
+      borderRadius: 8,
+    },
+    btnFavoriteAdd: {
+      backgroundColor: Colors.picton,
+    },
+    btnFavoriteRemove: {
+      backgroundColor: Colors.carmine,
+    },
+    btnFavoriteText: {
+      color: '#fff',
+    },
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.subHeader}>
-        <Image
-          style={styles.iconImg}
-          source={{uri: getSymbolIcon(coinDetails.name)}}
-        />
-        <Text style={styles.titleText}>{coinDetails.name}</Text>
+        <View style={styles.row}>
+          <Image
+            style={styles.iconImg}
+            source={{uri: getSymbolIcon(coinDetails.name)}}
+          />
+          <Text style={styles.titleText}>{coinDetails.name}</Text>
+        </View>
+
+        <Pressable
+          onPress={toggleFavorite}
+          style={[
+            styles.btnFavorite,
+            isFavorite ? styles.btnFavoriteRemove : styles.btnFavoriteAdd,
+          ]}>
+          <Text style={styles.btnFavoriteText}>
+            {isFavorite ? 'Remove favorite' : 'Add favorite'}
+          </Text>
+        </Pressable>
       </View>
       <SectionList
         style={styles.section}
