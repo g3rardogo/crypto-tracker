@@ -6,6 +6,7 @@ import {
   SectionList,
   FlatList,
   Pressable,
+  Alert,
   StyleSheet,
 } from 'react-native';
 import Colors from '../../res/colors';
@@ -68,9 +69,22 @@ const CoinDetailScreen = props => {
   };
 
   const removeFavorite = async () => {
-    const key = `favorite-${coin.id}`;
-    await Storage.instance.remove(key);
-    setFavorite(false);
+    Alert.alert('Remove favorite', 'Are you sure?', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Remove',
+        onPress: async () => {
+          const key = `favorite-${coin.id}`;
+          await Storage.instance.remove(key);
+          setFavorite(false);
+        },
+        style: 'destructive',
+      },
+    ]);
   };
 
   const toggleFavorite = () => {
