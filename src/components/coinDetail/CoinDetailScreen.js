@@ -23,6 +23,7 @@ const CoinDetailScreen = props => {
 
   useEffect(() => {
     getMarkets(coin.id);
+    checkFavorite();
   }, []);
 
   const getSymbolIcon = nameStr => {
@@ -56,23 +57,40 @@ const CoinDetailScreen = props => {
     setMarkets(markets);
   };
 
-  const addFavorite = () => {
+  const addFavorite = async () => {
     const coinStr = JSON.stringify(coin);
     const key = `favorite-${coin.id}`;
-    const stored = Storage.instance.add(key, coinStr);
+    const stored = await Storage.instance.add(key, coinStr);
 
     if (stored) {
       setFavorite(true);
     }
   };
 
-  const removeFavorite = () => {};
+  const removeFavorite = async () => {
+    const key = `favorite-${coin.id}`;
+    await Storage.instance.remove(key);
+    setFavorite(false);
+  };
 
   const toggleFavorite = () => {
     if (isFavorite) {
       removeFavorite();
     } else {
       addFavorite();
+    }
+  };
+
+  const checkFavorite = async () => {
+    try {
+      const key = `favorite-${coin.id}`;
+      const favStr = await Storage.instance.get(key);
+      console.log('favStr', favStr);
+      if (favStr != null) {
+        setFavorite(true);
+      }
+    } catch (error) {
+      console.log('Check favorite error: ', error);
     }
   };
 
