@@ -20,7 +20,6 @@ const CoinDetailScreen = props => {
   const [markets, setMarkets] = useState([]);
   const [isFavorite, setFavorite] = useState(false);
   props.navigation.setOptions({title: coin.name});
-  console.log('details: ', coinDetails);
 
   useEffect(() => {
     getMarkets(coin.id);
@@ -99,7 +98,6 @@ const CoinDetailScreen = props => {
     try {
       const key = `favorite-${coin.id}`;
       const favStr = await Storage.instance.get(key);
-      console.log('favStr', favStr);
       if (favStr != null) {
         setFavorite(true);
       }
