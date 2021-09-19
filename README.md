@@ -1,8 +1,9 @@
 # Crypto Tracker 📈
 
-Check original cryptocurrency/coin prices and other metrics. Built with React Native
+Check original cryptocurrency/coin prices and other metrics. Built with React Native.
+<br/>
 [![wakatime](https://wakatime.com/badge/github/g3rardogo/crypto-tracker.svg)](https://wakatime.com/badge/github/g3rardogo/crypto-tracker)
-
+<br/>
 ![Screenshot](screenshot.png)
 
 ## Overview 🔎
